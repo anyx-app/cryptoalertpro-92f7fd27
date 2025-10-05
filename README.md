@@ -246,6 +246,47 @@ const anyx = createAnyxClient({ apiKey: process.env.ANYX_COMMON_API_KEY })
   - Ensure your backend proxy injects `x-api-key` (browser should not send it).
   - For server/test usage only, pass `apiKey` to `createAnyxClient`.
 
+## 🎨 Theming (CSS variables + data-theme)
+
+This boilerplate supports near-zero-effort UI theming using CSS variables and a tiny `ThemeProvider`.
+
+### How it works
+
+- Tokens live in `src/index.css` under `:root` and are overridden for dark mode under `:root[data-theme='dark']`.
+- A pre-hydration script in `index.html` applies the last chosen theme (or system default) to avoid flash.
+- `ThemeProvider` manages theme state and persistence; `useTheme` exposes `theme` and `setTheme`.
+
+### Files
+
+- `src/index.css` – adds `:root[data-theme='light'|'dark']` token blocks
+- `src/theme/ThemeProvider.tsx` – `ThemeProvider` + `useTheme`
+- `src/components/common/ThemeToggle.tsx` – simple toggle button
+- `src/App.tsx` – wraps app with `ThemeProvider`
+- `index.html` – tiny inline script to set initial `data-theme`
+
+### Usage
+
+```tsx
+import { ThemeToggle } from '@/components/common/ThemeToggle'
+
+function Header() {
+  return (
+    <header className="flex items-center justify-between p-4">
+      <h1>App</h1>
+      <ThemeToggle />
+    </header>
+  )
+}
+```
+
+All components that use the shared CSS tokens (e.g., `bg-background text-foreground`) will respond automatically.
+
+### Agent handoff
+
+- Theme selection is stored in `localStorage` under `theme` and applied via `document.documentElement.dataset.theme`.
+- To add a new theme, define a new block in `src/index.css`, e.g. `:root[data-theme='dim'] { ... }`, then allow `setTheme('dim')`.
+- Ensure new UI components use tokens (not hard-coded colors) to remain theme-compatible.
+
 ## 🔐 Supabase Integration (Auth + Guards)
 
 This boilerplate includes optional Supabase auth with a drop-in UI and Google/GitHub OAuth.
