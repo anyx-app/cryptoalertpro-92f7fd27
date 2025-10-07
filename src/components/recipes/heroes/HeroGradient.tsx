@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { GradientBackground } from '../effects/GradientBackground'
-import { fadeInUp, staggerContainer, staggerItem } from '../animations'
+import { staggerContainer, staggerItem } from '../animations'
 
 interface HeroGradientProps {
   title: string

@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
-import { fadeInUp, fadeInLeft, fadeInRight } from '../animations'
+import { fadeInLeft, fadeInRight } from '../animations'
 
 interface HeroSpotlightProps {
   title: string

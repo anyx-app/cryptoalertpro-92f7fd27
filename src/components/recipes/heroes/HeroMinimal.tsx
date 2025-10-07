@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
-import { fadeInUp, staggerContainer, staggerItem } from '../animations'
+import { staggerContainer, staggerItem } from '../animations'
 
 interface HeroMinimalProps {
   title: string
