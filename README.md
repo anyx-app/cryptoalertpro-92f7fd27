@@ -20,6 +20,12 @@ A starter template for building scalable multi-page React applications with mode
 ## 📁 Folder Structure
 ```
 anyx-react-boilerplate/
+├── docs/                      # Documentation
+│   ├── AI_DESIGN_GUIDE.md     # Design principles for AI agents
+│   ├── UI_PATTERNS.md         # Copy-paste UI patterns
+│   ├── ROUTING.md             # Routing guide
+│   ├── RECIPES.md             # UI recipe library docs
+│   └── DESIGN_SYSTEM.md       # Design system reference
 ├── public/                    # Static assets (e.g., index.html, images)
 ├── src/
 │   ├── pages/                 # Route-based pages
@@ -109,11 +115,21 @@ Best practices:
    ```
    Regenerates stubs and re-exports for all UI primitives under `src/components/ui`.
 
+## 📚 Documentation
+
+All comprehensive guides are organized in the `/docs` folder:
+
+- **[ROUTING.md](./docs/ROUTING.md)** - Complete routing guide (pages, navigation, protected routes)
+- **[DESIGN_SYSTEM.md](./docs/DESIGN_SYSTEM.md)** - Design system reference and theme customization
+- **[RECIPES.md](./docs/RECIPES.md)** - UI recipe library with animated components
+- **[AI_DESIGN_GUIDE.md](./docs/AI_DESIGN_GUIDE.md)** - Design principles for AI-assisted development
+- **[UI_PATTERNS.md](./docs/UI_PATTERNS.md)** - Copy-paste ready UI patterns and templates
+
 ## 🛣️ Adding Pages and Routes
 
 The boilerplate starts minimal with just a homepage. When you're ready to add more pages:
 
-**See [ROUTING.md](./ROUTING.md)** for comprehensive guide including:
+**See [ROUTING.md](./docs/ROUTING.md)** for comprehensive guide including:
 - How to create new pages
 - Adding routes step-by-step
 - Using pre-built pages (Auth, Dashboard, Themes, Recipes, Showcase)
@@ -551,7 +567,7 @@ function LandingPage() {
 
 ### Documentation
 
-See [RECIPES.md](./RECIPES.md) for complete documentation including:
+See [RECIPES.md](./docs/RECIPES.md) for complete documentation including:
 - All available recipes with examples
 - Animation preset usage
 - Customization guide
