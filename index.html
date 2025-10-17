@@ -17,7 +17,7 @@
     <title>Anyx.app - The easiest way to build your SaaS</title>
     <style>
       :root { --anyx-badge-display: block; }
-      .anyx-badge { position: fixed; right: calc(16px + env(safe-area-inset-right)); bottom: calc(16px + env(safe-area-inset-bottom)); z-index: 9999; display: var(--anyx-badge-display, block); }
+      .anyx-badge { position: fixed; left: calc(16px + env(safe-area-inset-left)); bottom: calc(16px + env(safe-area-inset-bottom)); z-index: 9999; display: var(--anyx-badge-display, block); }
       .anyx-badge__link { display: inline-flex; align-items: center; gap: 8px; height: 36px; padding: 0 12px; border-radius: 9999px; background: #000; color: #fff; border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 6px 24px rgba(0,0,0,0.35); text-decoration: none; transform: translateZ(0); transition: transform 160ms ease, background-color 160ms ease; font-weight: 600; font-size: 13px; line-height: 1; }
       .anyx-badge__link:hover { transform: scale(1.03); background: #0a0a0a; }
       .anyx-badge__link:focus-visible { outline: 2px solid #7dd3fc; outline-offset: 2px; }
