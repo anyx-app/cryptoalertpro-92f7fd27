@@ -124,3 +124,7 @@ coverage
 
 @tests/
 .vercel
+
+# AI Agent Testing Files (should never be committed)
+src/repro.ts
+*.last-run.json
