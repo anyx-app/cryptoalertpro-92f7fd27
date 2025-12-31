@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { getAnyxConfig } from "@/config/anyx";
+import { getAnyxConfig } from "../config/anyx.js";
 
 // Error classes for precise UI handling
 export class AuthError extends Error {
@@ -145,6 +145,7 @@ export type AnyxClientOptions = {
     retries?: number; // default 2 (total attempts = retries + 1)
     backoffBaseMs?: number; // default 400ms
   };
+  headers?: Record<string, string>; // Extra headers (e.g. Origin, Referer)
 };
 
 // Public client interface
@@ -184,10 +185,12 @@ async function doRequest<T>(
   path: string,
   body: unknown,
   parse: (data: unknown) => T,
-  retryCfg: { retries: number; backoffBaseMs: number }
+  retryCfg: { retries: number; backoffBaseMs: number },
+  extraHeaders?: Record<string, string>
 ): Promise<T> {
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
+    ...extraHeaders,
   };
   if (projectId) headers["x-project-id"] = projectId;
   if (apiKey) headers["x-api-key"] = apiKey; // only for server/test usage
@@ -257,13 +260,20 @@ async function doRequest<T>(
     let data: unknown;
     try {
       data = await res.json();
+      console.log(`[Anyx SDK] Response data from ${url}:`, JSON.stringify(data).slice(0, 200));
     } catch (err) {
+      console.error(`[Anyx SDK] Failed to parse JSON from ${url}`);
       throw new InvalidResponseError("Failed to parse JSON response");
     }
 
     try {
-      return parse(data);
+      const parsed = parse(data);
+      if (!parsed) {
+        console.error(`[Anyx SDK] Parsed data is null/undefined for ${url}`);
+      }
+      return parsed;
     } catch (err) {
+      console.error(`[Anyx SDK] Schema validation failed for ${url}:`, err);
       if (err instanceof z.ZodError) {
         throw new InvalidResponseError(err.message);
       }
@@ -280,6 +290,7 @@ export function createAnyxClient(options?: AnyxClientOptions): AnyxClient {
   const baseUrl = options?.baseUrl ?? defaults.serverUrl;
   const projectId = options?.projectId ?? defaults.projectId;
   const apiKey = options?.apiKey ?? defaults.apiKey; // allow via env for tests
+  const extraHeaders = options?.headers;
   const retryCfg = {
     retries: options?.retry?.retries ?? 2,
     backoffBaseMs: options?.retry?.backoffBaseMs ?? 400,
@@ -297,25 +308,25 @@ export function createAnyxClient(options?: AnyxClientOptions): AnyxClient {
   return {
     llm: async (request: LlmRequest) => {
       if (!baseUrl) throw new Error("Anyx SDK baseUrl not configured");
-      return doRequest<LlmResponse>(baseUrl, projectId, apiKey, "/api/common/llm", request, (data) => LlmResponseSchema.parse(data), retryCfg);
+      return doRequest<LlmResponse>(baseUrl, projectId, apiKey, "/api/common/llm", request, (data) => LlmResponseSchema.parse(data), retryCfg, extraHeaders);
     },
     vision: async (request: VisionRequest) => {
       if (!baseUrl) throw new Error("Anyx SDK baseUrl not configured");
       const withDefaults = { model: "gpt-4o-mini" as const, ...request };
-      return doRequest<VisionResponse>(baseUrl, projectId, apiKey, "/api/common/llm/vision", withDefaults, (data) => VisionResponseSchema.parse(data), retryCfg);
+      return doRequest<VisionResponse>(baseUrl, projectId, apiKey, "/api/common/llm/vision", withDefaults, (data) => VisionResponseSchema.parse(data), retryCfg, extraHeaders);
     },
     image: async (request: ImageRequest) => {
       if (!baseUrl) throw new Error("Anyx SDK baseUrl not configured");
       const withDefaults = { size: "1024x1024" as const, ...request };
-      return doRequest<ImageResponse>(baseUrl, projectId, apiKey, "/api/common/image", withDefaults, (data) => ImageResponseSchema.parse(data), retryCfg);
+      return doRequest<ImageResponse>(baseUrl, projectId, apiKey, "/api/common/image", withDefaults, (data) => ImageResponseSchema.parse(data), retryCfg, extraHeaders);
     },
     email: async (request: EmailRequest) => {
       if (!baseUrl) throw new Error("Anyx SDK baseUrl not configured");
-      return doRequest<EmailResponse>(baseUrl, projectId, apiKey, "/api/common/email", request, (data) => EmailResponseSchema.parse(data), retryCfg);
+      return doRequest<EmailResponse>(baseUrl, projectId, apiKey, "/api/common/email", request, (data) => EmailResponseSchema.parse(data), retryCfg, extraHeaders);
     },
     sms: async (request: SmsRequest) => {
       if (!baseUrl) throw new Error("Anyx SDK baseUrl not configured");
-      return doRequest<SmsResponse>(baseUrl, projectId, apiKey, "/api/common/sms", request, (data) => SmsResponseSchema.parse(data), retryCfg);
+      return doRequest<SmsResponse>(baseUrl, projectId, apiKey, "/api/common/sms", request, (data) => SmsResponseSchema.parse(data), retryCfg, extraHeaders);
     },
     config: Object.freeze({ baseUrl, projectId }),
   };
